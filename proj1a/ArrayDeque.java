@@ -192,9 +192,18 @@ public class ArrayDeque<T> {
     }
 
     public T get(int index) {
-        if (nextFirst < nextLast) {
-
+        if (index >= size) {
+            return null;
         }
-        return items[index];
+
+        if (nextFirst > nextLast) {
+            if ((nextFirst + index + 1) <= items.length - 1) {
+                return items[nextFirst + index + 1];
+            } else {
+                return items[index - (items.length - 1 - nextFirst)];
+            }
+        } else {
+            return items[index + 1];
+        }
     }
 }
