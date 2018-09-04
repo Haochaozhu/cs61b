@@ -27,12 +27,12 @@ public class ArrayDeque<T> {
 //    Doubles the size of the array.
 
     private void resizeGrow() {
-         T[] a = (T[]) new Object[items.length * 2];
-         System.arraycopy(items, 0, a, 0, nextLast);
-         System.arraycopy(items, nextLast, a,
+          T[] a = (T[]) new Object[items.length * 2];
+          System.arraycopy(items, 0, a, 0, nextLast);
+          System.arraycopy(items, nextLast, a,
                  nextLast + items.length, items.length - nextLast);
-         items = a;
-         nextFirst = nextFirst + items.length / 2;
+          items = a;
+          nextFirst = nextFirst + items.length / 2;
     }
 
     private void resizeShrink() {
@@ -55,7 +55,7 @@ public class ArrayDeque<T> {
         nextFirst = items.length - 1;
     }
 
-    public T getFrontItem () {
+    public T getFrontItem() {
         if (nextFirst + 1 == items.length) {
             return items[0];
         } else {
@@ -63,7 +63,7 @@ public class ArrayDeque<T> {
         }
     }
 
-    public T getBackItem () {
+    public T getBackItem() {
         if (nextLast - 1 < 0) {
             return items[items.length - 1];
         } else {
@@ -97,7 +97,9 @@ public class ArrayDeque<T> {
     }
 
     public boolean isEmpty() {
-        if (size == 0) return true;
+        if (size == 0) {
+            return true;
+        }
         return false;
     }
 
@@ -149,12 +151,12 @@ public class ArrayDeque<T> {
         if (items.length == 8) {
             return returnItem;
         } else {
-            if (4*size < items.length) {
+            if (4 * size < items.length) {
                 resizeShrink();
                 return returnItem;
             }
         }
-        return null;
+        return returnItem;
     }
 
 //    Removes and returns the item at the back of the deque.
@@ -183,12 +185,12 @@ public class ArrayDeque<T> {
         if (items.length < 16) {
             return returnItem;
         } else {
-            if (size*4 < items.length) {
+            if (size * 4 < items.length) {
                 resizeShrink();
                 return returnItem;
             }
         }
-        return null;
+        return returnItem;
     }
 
     public T get(int index) {
