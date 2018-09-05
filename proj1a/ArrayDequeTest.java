@@ -14,15 +14,15 @@ public class ArrayDequeTest {
         a.addFirst(12);
         a.addFirst(53);
 
-        a.removeLast();
-        a.removeFirst();
-        a.removeLast();
-        a.removeFirst();
-        a.removeFirst();
-        a.removeFirst();
 
-        a.printDeque();
 
+        System.out.println(a.get(0));
+        System.out.println(a.get(1));
+        System.out.println(a.get(2));
+        System.out.println(a.get(3));
+        System.out.println(a.get(4));
+        System.out.println(a.get(5));
+        System.out.println(a.get(6));
 
 
     }
