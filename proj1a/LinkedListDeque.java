@@ -119,20 +119,22 @@ public class LinkedListDeque<T> {
         return result;
     }
 
-//    public T getRecursion(int index) {
-//        if (index == 0) return sentinel.next.item;
-//
-//        return getRecursion(index - 1);
-//
-//    }
-//
-
-
-    public static void main(String[] args) {
-        LinkedListDeque<String> d1 = new LinkedListDeque<>();
-        d1.addFirst("banana");
-        d1.removeFirst();
-        d1.isEmpty();
-
+    public T getRecursion(int index) {
+        Node result = getRecursionHelper(sentinel.next, index);
+        return result.item;
     }
+
+    public Node getRecursionHelper(Node pointer, int index) {
+        if (index == 0) {
+            return pointer;
+        } else {
+            if (pointer.next == null) {
+                return pointer;
+            }
+            index--;
+            pointer = pointer.next;
+        }
+        return pointer;
+    }
+
 }

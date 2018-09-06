@@ -55,7 +55,7 @@ public class ArrayDeque<T> {
         nextFirst = items.length - 1;
     }
 
-    public T getFrontItem() {
+    private T getFrontItem() {
         if (nextFirst + 1 == items.length) {
             return items[0];
         } else {
@@ -63,7 +63,7 @@ public class ArrayDeque<T> {
         }
     }
 
-    public T getBackItem() {
+    private T getBackItem() {
         if (nextLast - 1 < 0) {
             return items[items.length - 1];
         } else {
