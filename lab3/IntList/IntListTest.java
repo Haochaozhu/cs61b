@@ -88,4 +88,12 @@ public class IntListTest {
 
     }
 
+    @Test
+    public void testRemoveDuplicates() {
+        IntList a = IntList.of(3,3,4,4,5,5,5,6,7,7);
+        IntList expected = IntList.of(3,4,5,6,7);
+        IntList.removeDuplicates(a);
+        assertEquals(expected, a);
+    }
+
 }

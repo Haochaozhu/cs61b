@@ -146,6 +146,44 @@ public class IntList {
         return A;
     }
 
+    public void skippify() {
+        IntList p = this;
+        int nodesToSkip = 1;
+        while (p != null) {
+            IntList next = p.rest;
+
+            for (int i = 0; i < nodesToSkip; i++) {
+                if(next == null) {
+                    break;
+                }
+                next = next.rest;
+            }
+
+            p.rest = next;
+            p = p.rest;
+
+            nodesToSkip++;
+        }
+    }
+
+    public static void removeDuplicates(IntList p) {
+        if (p == null) {
+            return;
+        }
+
+        IntList current = p.rest;
+        IntList previous = p;
+
+        while (current != null) {
+            if (current.first == previous.first) {
+                previous.rest = current.rest;
+            } else {
+                previous = previous.rest;
+            }
+            current = current.rest;
+        }
+    }
+
 
 
 

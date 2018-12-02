@@ -86,6 +86,22 @@ public class TestBSTMap {
         assertTrue(b.get("hi") != null);
     }
 
+    @Test
+    public void keySetTest() {
+        BSTMap<String, Integer> b = new BSTMap<>();
+        b.put("Huilin", 427);
+        b.put("Haochao", 929);
+        b.put("Hanna", 158);
+        b.put("Joe", 178);
+        java.util.Set<String> s = b.keySet();
+        assertTrue(s.contains("Huilin"));
+        assertTrue(s.contains("Haochao"));
+        assertTrue(s.contains("Hanna"));
+        assertTrue(s.contains("Joe"));
+        assertFalse(s.contains("KK"));
+
+    }
+
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(TestBSTMap.class);
     }

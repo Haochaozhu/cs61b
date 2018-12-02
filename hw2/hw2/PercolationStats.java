@@ -46,8 +46,8 @@ public class PercolationStats {
     }
 
     public static void main(String[] args) {
-        PercolationStats prcs = new PercolationStats(2, 100, new PercolationFactory());
-        StdOut.println(prcs.mean());
-        StdOut.println("Finished!");
+        StdOut.println(-1 % 4);
+        StdOut.println(Math.floorMod(-1, 4));
+
     }
 }
