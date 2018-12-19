@@ -35,7 +35,7 @@ public class MapServer {
      * Longitude == x-axis; latitude == y-axis.
      */
     public static final double ROOT_ULLAT = 37.892195547244356, ROOT_ULLON = -122.2998046875,
-            ROOT_LRLAT = 37.82280243352756, ROOT_LRLON = -122.2119140625;
+            ROOT_LRLAT = 37.82280243352756,ROOT_LRLON = -122.2119140625;
     /** Each tile is 256x256 pixels. */
     public static final int TILE_SIZE = 256;
     /** HTTP failed response. */
@@ -285,6 +285,8 @@ public class MapServer {
      * cleaned <code>prefix</code>.
      */
     public static List<String> getLocationsByPrefix(String prefix) {
+        //TODO
+
         return new LinkedList<>();
     }
 
@@ -301,6 +303,7 @@ public class MapServer {
      * "id" : Number, The id of the node. <br>
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
+        //TODO
         return new LinkedList<>();
     }
 
@@ -342,4 +345,6 @@ public class MapServer {
         }
         return sb.toString();
     }
+
+
 }

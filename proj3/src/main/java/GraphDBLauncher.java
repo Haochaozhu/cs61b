@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * This class provides a main method for experimenting with GraphDB construction.
@@ -25,7 +26,7 @@ public class GraphDBLauncher {
         System.out.println("The first 10 vertices are:");
         for (int i = 0; i < 10; i += 1) {
             if (i < vertices.size()) {
-                System.out.println(vertices.get(i));
+                System.out.println(vertices.get(i) + " on " + g.findNode(vertices.get(i)).way);
             }
         }
 

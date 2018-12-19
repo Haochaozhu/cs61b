@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +22,83 @@ public class Router {
      * @param destlat The latitude of the destination location.
      * @return A list of node id's in the order visited on the shortest path.
      */
+
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+        PriorityQueue<SearchNode> pq = new PriorityQueue<>();
+        Map<Long, SearchNode> marked = new LinkedHashMap<>();
+
+        long start = g.closest(stlon, stlat);
+        long destination = g.closest(destlon, destlat);
+
+        SearchNode initial = new SearchNode(0,
+                g.distance(start, destination), null, start);
+        marked.put(initial.id, initial);
+        pq.add(initial);
+
+        while(pq.peek().estimatedDistToDes != 0) {
+            SearchNode curNode = pq.remove();
+
+            for (Long neigbID : g.adjacent(curNode.id)) {
+                if (!marked.containsKey(neigbID)) {
+                    SearchNode neighb = new SearchNode(g.distance(neigbID, curNode.id) +
+                            curNode.bsDistFromStart, g.distance(neigbID, destination), curNode, neigbID);
+                    pq.add(neighb);
+                    marked.put(neigbID, neighb);
+                } else {
+                    SearchNode neighb = marked.get(neigbID);
+                    if (g.distance(neigbID, curNode.id) + curNode.bsDistFromStart < neighb.bsDistFromStart) {
+                        neighb.bsDistFromStart = g.distance(neigbID, curNode.id) + curNode.bsDistFromStart;
+                        neighb.previousNode = curNode;
+                        pq.add(new SearchNode(neighb.bsDistFromStart, neighb.estimatedDistToDes,
+                                curNode, neigbID));
+                    }
+                }
+            }
+        }
+
+        SearchNode end = pq.remove();
+
+
+
+        return findPath(end); // FIXME
+    }
+
+    private static List<Long> findPath(SearchNode target) {
+        LinkedList<Long> res = new LinkedList<>();
+        SearchNode currentNode = target;
+
+        while (currentNode.previousNode != null) {
+            res.addFirst(currentNode.id);
+            currentNode = currentNode.previousNode;
+        }
+
+        res.addFirst(currentNode.id);
+
+        return res;
+    }
+
+    static class SearchNode implements Comparable<SearchNode> {
+        double bsDistFromStart;
+        double estimatedDistToDes;
+        SearchNode previousNode;
+        long id;
+
+        SearchNode(double bsDistFromStart,
+                   double estimatedDistToDes, SearchNode previousNode, long id) {
+            this.bsDistFromStart = bsDistFromStart;
+            this.estimatedDistToDes = estimatedDistToDes;
+            this.previousNode = previousNode;
+            this.id = id;
+        }
+
+        @Override
+        public int compareTo(SearchNode o) {
+            double thisPriority = this.bsDistFromStart + this.estimatedDistToDes;
+            double oPriority = o.bsDistFromStart + o.estimatedDistToDes;
+            if (thisPriority == oPriority) return 0;
+            else return thisPriority < oPriority ? -1 : 1;
+        }
     }
 
     /**
@@ -37,10 +110,49 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
-        return null; // FIXME
+        LinkedList<NavigationDirection> res = new LinkedList<>();
+        String example = "Go straight on unknown road and continue for 0.000 miles.";
+
+        String DIRECTION = "Start";
+        String WAY = g.findNode(route.get(0)).way;
+        double DISTANCE = g.distance(route.get(0), route.get(1));
+
+        for (int i = 0; i < route.size() - 1; i += 1) {
+            GraphDB.Node cur = g.findNode(route.get(i));
+            GraphDB.Node next = g.findNode(route.get(i + 1));
+
+            if (!cur.way.equals(next.way)) {
+                String s = DIRECTION + " on " + WAY + " and continue for " + DISTANCE + " miles.";
+                res.add(NavigationDirection.fromString(s));
+                double bearing = g.bearing(route.get(i), route.get(i + 1));
+                DIRECTION = decideDirection(bearing);
+                WAY = next.way;
+                if (i != route.size() - 1) {
+                    DISTANCE = g.distance(next.id, route.get(i + 2));
+                }
+            } else {
+                DISTANCE += g.distance(cur.id, next.id);
+            }
+        }
+
+        return res; // FIXME
     }
 
 
+    private static String decideDirection(double bearing) {
+        if (bearing <= 15 && bearing >= -15) return "Go straight";
+        else if (bearing > 15) {
+            if (bearing <= 30) return "Slight right";
+            else if (bearing > 30 && bearing <= 100) return "Turn right";
+            else return "Sharp right";
+        }
+        else if (bearing < -15) {
+            if (bearing >= -30) return "Slight left";
+            else if (bearing < -30 && bearing >= -100) return "Turn left";
+            else return "Sharp left";
+        }
+        return null;
+    }
     /**
      * Class to represent a navigation direction, which consists of 3 attributes:
      * a direction to go, a way, and the distance to travel for.
@@ -159,5 +271,11 @@ public class Router {
         public int hashCode() {
             return Objects.hash(direction, way, distance);
         }
+    }
+
+    public static void main(String[] args) {
+        String s = "Start" + " on " + "Galloway" + " and continue for " + 0.982 + " miles.";
+        NavigationDirection n = NavigationDirection.fromString(s);
+        System.out.println(n);
     }
 }

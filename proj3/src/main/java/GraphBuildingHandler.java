@@ -5,6 +5,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  *  Parses OSM XML files using an XML SAX parser. Used to construct the graph of roads for
@@ -38,6 +39,8 @@ public class GraphBuildingHandler extends DefaultHandler {
                     "secondary_link", "tertiary_link"));
     private String activeState = "";
     private final GraphDB g;
+    private Stack<Long> tempNode;
+    private boolean validWayFlag;
 
     /**
      * Create a new GraphBuildingHandler.
@@ -45,6 +48,8 @@ public class GraphBuildingHandler extends DefaultHandler {
      */
     public GraphBuildingHandler(GraphDB g) {
         this.g = g;
+        tempNode = new Stack<>();
+        validWayFlag = false;
     }
 
     /**
@@ -74,14 +79,20 @@ public class GraphBuildingHandler extends DefaultHandler {
 
             /* TODO Use the above information to save a "node" to somewhere. */
             /* Hint: A graph-like structure would be nice. */
+            long id = Long.valueOf(attributes.getValue("id"));
+            double lon = Double.valueOf(attributes.getValue("lon"));
+            double lat = Double.valueOf(attributes.getValue("lat"));
+            GraphDB.Node n = new GraphDB.Node(id, lon, lat);
+            g.addNode(id, n);
 
         } else if (qName.equals("way")) {
             /* We encountered a new <way...> tag. */
+            // FIXME
             activeState = "way";
 //            System.out.println("Beginning a way...");
         } else if (activeState.equals("way") && qName.equals("nd")) {
             /* While looking at a way, we found a <nd...> tag. */
-            //System.out.println("Id of a node in this way: " + attributes.getValue("ref"));
+//            System.out.println("Id of a node in this way: " + attributes.getValue("ref"));
 
             /* TODO Use the above id to make "possible" connections between the nodes in this way */
             /* Hint1: It would be useful to remember what was the last node in this way. */
@@ -89,20 +100,25 @@ public class GraphBuildingHandler extends DefaultHandler {
             cumbersome since you might have to remove the connections if you later see a tag that
             makes this way invalid. Instead, think of keeping a list of possible connections and
             remember whether this way is valid or not. */
+            tempNode.push(Long.valueOf(attributes.getValue("ref")));
 
         } else if (activeState.equals("way") && qName.equals("tag")) {
             /* While looking at a way, we found a <tag...> tag. */
             String k = attributes.getValue("k");
             String v = attributes.getValue("v");
             if (k.equals("maxspeed")) {
-                //System.out.println("Max Speed: " + v);
+//                System.out.println("Max Speed: " + v);
                 /* TODO set the max speed of the "current way" here. */
             } else if (k.equals("highway")) {
-                //System.out.println("Highway type: " + v);
+//                System.out.println("Highway type: " + v);
                 /* TODO Figure out whether this way and its connections are valid. */
                 /* Hint: Setting a "flag" is good enough! */
+                if (ALLOWED_HIGHWAY_TYPES.contains(v)) validWayFlag = true;
             } else if (k.equals("name")) {
-                //System.out.println("Way Name: " + v);
+//                System.out.println("Way Name: " + v);
+                    for (long node : tempNode) {
+                        g.findNode(node).editWay(v);
+                    }
             }
 //            System.out.println("Tag with k=" + k + ", v=" + v + ".");
         } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k")
@@ -134,7 +150,32 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* Hint1: If you have stored the possible connections for this way, here's your
             chance to actually connect the nodes together if the way is valid. */
 //            System.out.println("Finishing a way...");
+            if (validWayFlag) {
+                validWayFlag = false;
+                while (tempNode.size() > 1) {
+                    long current = tempNode.pop();
+                    long next = tempNode.peek();
+                    GraphDB.Node currenNode = g.findNode(current);
+                    GraphDB.Node nextNode = g.findNode(next);
+                    currenNode.addNeighb(next);
+                    nextNode.addNeighb(current);
+                }
+                tempNode.pop();
+            } else {
+//                System.out.println("This is not a valid way!");
+                tempNode = new Stack<>();
+            }
         }
+    }
+
+    public static void main(String[] args) {
+        Stack<Integer> s = new Stack<>();
+        s.push(1);
+        s.push(2);
+        s.pop();
+        System.out.println(s.peek());
+        s.pop();
+        System.out.println(s.isEmpty());
     }
 
 }
