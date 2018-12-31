@@ -76,6 +76,8 @@ public class MergeSort {
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
+        if (items.size() <= 1) return items;
+
         Queue<Queue<Item>> queues = makeSingleItemQueues(items);
 
         while (queues.size() > 1) {
@@ -93,13 +95,13 @@ public class MergeSort {
     public static void main(String[] args) {
         Queue<String> students = new Queue<>();
 
-        students.enqueue("M");
-        students.enqueue("J");
-        students.enqueue("G");
-        students.enqueue("D");
-        students.enqueue("E");
-        students.enqueue("C");
-        students.enqueue("D");
+//        students.enqueue("M");
+//        students.enqueue("J");
+//        students.enqueue("G");
+//        students.enqueue("D");
+//        students.enqueue("E");
+//        students.enqueue("C");
+//        students.enqueue("D");
         StdOut.println("Before sorting: " + students.toString());
         StdOut.println("After sorting: " + MergeSort.mergeSort(students).toString());
 

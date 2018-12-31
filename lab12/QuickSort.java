@@ -49,13 +49,13 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
-            while (unsorted.size() > 0) {
-                Item i = unsorted.dequeue();
-                int c = i.compareTo(pivot);
-                if (c > 0) greater.enqueue(i);
-                else if (c < 0) less.enqueue(i);
-                else equal.enqueue(i);
-            }
+
+        for (Item i : unsorted) {
+            int c = i.compareTo(pivot);
+            if (c > 0) greater.enqueue(i);
+            else if (c < 0) less.enqueue(i);
+            else equal.enqueue(i);
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
@@ -68,12 +68,9 @@ public class QuickSort {
         Queue<Item> equal = new Queue<>();
         Queue<Item> greater = new Queue<>();
         partition(items, pivot, less, equal, greater);
-
         less = quickSort(less);
         greater = quickSort(greater);
-
         items = catenate(catenate(less, equal), greater);
-
         return items;
     }
 
@@ -91,6 +88,7 @@ public class QuickSort {
         StdOut.println("Before sorting: " + students.toString());
         StdOut.println("After sorting: " + QuickSort.quickSort(students).toString());
         StdOut.println("Actual ordering: C D D E G J M");
+        StdOut.println(students.size());
 
     }
 }
