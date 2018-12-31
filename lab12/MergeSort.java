@@ -1,4 +1,6 @@
+import edu.princeton.cs.algs4.Merge;
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.StdOut;
 
 public class MergeSort {
     /**
@@ -35,7 +37,14 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> res = new Queue<>();
+
+        for (Item i : items) {
+            Queue<Item> q = new Queue<>();
+            q.enqueue(i);
+            res.enqueue(q);
+        }
+        return res;
     }
 
     /**
@@ -54,13 +63,45 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        int size = q1.size() + q2.size();
+        Queue<Item> res = new Queue<>();
+        for (int i = 0; i < size; i += 1) {
+            Item item = getMin(q1, q2);
+            res.enqueue(item);
+        }
+        return res;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        Queue<Queue<Item>> queues = makeSingleItemQueues(items);
+
+        while (queues.size() > 1) {
+            Queue<Item> q1 = queues.dequeue();
+            Queue<Item> q2 = queues.dequeue();
+            queues.enqueue(mergeSortedQueues(q1, q2));
+        }
+
+        return queues.dequeue();
+    }
+
+
+
+
+    public static void main(String[] args) {
+        Queue<String> students = new Queue<>();
+
+        students.enqueue("M");
+        students.enqueue("J");
+        students.enqueue("G");
+        students.enqueue("D");
+        students.enqueue("E");
+        students.enqueue("C");
+        students.enqueue("D");
+        StdOut.println("Before sorting: " + students.toString());
+        StdOut.println("After sorting: " + MergeSort.mergeSort(students).toString());
+
     }
 }

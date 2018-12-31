@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.StdOut;
 
 public class QuickSort {
     /**
@@ -48,12 +49,48 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
+            while (unsorted.size() > 0) {
+                Item i = unsorted.dequeue();
+                int c = i.compareTo(pivot);
+                if (c > 0) greater.enqueue(i);
+                else if (c < 0) less.enqueue(i);
+                else equal.enqueue(i);
+            }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
         // Your code here!
+        if (items.size() <= 1) return items;
+        Item pivot = getRandomItem(items);
+        Queue<Item> less = new Queue<>();
+        Queue<Item> equal = new Queue<>();
+        Queue<Item> greater = new Queue<>();
+        partition(items, pivot, less, equal, greater);
+
+        less = quickSort(less);
+        greater = quickSort(greater);
+
+        items = catenate(catenate(less, equal), greater);
+
         return items;
+    }
+
+    public static void main(String[] args) {
+        Queue<String> students = new Queue<>();
+
+
+        students.enqueue("M");
+        students.enqueue("J");
+        students.enqueue("G");
+        students.enqueue("D");
+        students.enqueue("E");
+        students.enqueue("C");
+        students.enqueue("D");
+        StdOut.println("Before sorting: " + students.toString());
+        StdOut.println("After sorting: " + QuickSort.quickSort(students).toString());
+        StdOut.println("Actual ordering: C D D E G J M");
+
     }
 }

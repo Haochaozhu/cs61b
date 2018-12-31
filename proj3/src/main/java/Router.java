@@ -36,13 +36,13 @@ public class Router {
         marked.put(initial.id, initial);
         pq.add(initial);
 
-        while(pq.peek().estimatedDistToDes != 0) {
+        while (pq.peek().estimatedDistToDes != 0) {
             SearchNode curNode = pq.remove();
 
             for (Long neigbID : g.adjacent(curNode.id)) {
                 if (!marked.containsKey(neigbID)) {
-                    SearchNode neighb = new SearchNode(g.distance(neigbID, curNode.id) +
-                            curNode.bsDistFromStart, g.distance(neigbID, destination), curNode, neigbID);
+                    SearchNode neighb = new SearchNode(g.distance(neigbID, curNode.id)
+                            + curNode.bsDistFromStart, g.distance(neigbID, destination), curNode, neigbID);
                     pq.add(neighb);
                     marked.put(neigbID, neighb);
                 } else {
